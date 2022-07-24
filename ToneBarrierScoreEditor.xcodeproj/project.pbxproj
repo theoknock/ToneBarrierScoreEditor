@@ -35,7 +35,7 @@
 		B9B82A68288DB35200CBA53F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B9B82A69288DB35200CBA53F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B9B82A70288DB7A900CBA53F /* ScoreWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScoreWriter.h; sourceTree = "<group>"; };
-		B9B82A71288DB7A900CBA53F /* ScoreWriter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScoreWriter.m; sourceTree = "<group>"; };
+		B9B82A71288DB7A900CBA53F /* ScoreWriter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScoreWriter.m; sourceTree = "<group>"; wrapsLines = 0; };
 		B9B82A77288DBD2C00CBA53F /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
 		B9B82A78288DBD2C00CBA53F /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
 		B9B82A79288DBD2C00CBA53F /* AVRouting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVRouting.framework; path = System/Library/Frameworks/AVRouting.framework; sourceTree = SDKROOT; };

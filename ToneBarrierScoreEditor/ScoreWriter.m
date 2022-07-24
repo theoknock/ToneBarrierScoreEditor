@@ -51,19 +51,27 @@ static ScoreWriter *score = NULL;
         [self configureAudioSession];
 
         __block Float32 theta = 0.f;
-        const Float32 frequency = 440.f;
+        __block Float32 harmonic_theta = 0.f;
+        const Float32 frequency = 550; // left
+        const Float32 harmonic_frequency = 440; // right
         const Float32 sampleRate = 48000.f;
-        const Float32 amplitude = 0.25f;
+        const Float32 amplitude = 1.f;
         const Float32 M_PI_SQR = 2.f * M_PI;
         
         self.sineWaveGenerator = [[AVAudioSourceNode alloc] initWithRenderBlock:^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull outputData) {
             Float32 theta_increment = M_PI_SQR * frequency / sampleRate;
-            Float32 * buffer = (Float32 *)outputData->mBuffers[0].mData;
+            Float32 harmonic_theta_increment = M_PI_SQR * harmonic_frequency / sampleRate;
+            Float32 * buffer_left = (Float32 *)outputData->mBuffers[0].mData;
+            Float32 * harmonic_buffer_right = (Float32 *)outputData->mBuffers[1].mData;
             for (AVAudioFrameCount frame = 0; frame < frameCount; frame++)
             {
-                buffer[frame] = sin(theta) * amplitude;
+                buffer_left[frame] = sin(theta) * amplitude;
                 theta += theta_increment;
                 !(theta > M_PI_SQR) ?: (theta -= M_PI_SQR);
+                
+                harmonic_buffer_right[frame] = sin(harmonic_theta) * amplitude;
+                harmonic_theta += harmonic_theta_increment;
+                !(harmonic_theta > M_PI_SQR) ?: (harmonic_theta -= M_PI_SQR);
             }
             return (OSStatus)noErr;
         }];
