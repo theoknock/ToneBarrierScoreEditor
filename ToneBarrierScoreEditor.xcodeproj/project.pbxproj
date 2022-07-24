@@ -14,6 +14,11 @@
 		B9B82A64288DB35200CBA53F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B9B82A63288DB35200CBA53F /* Assets.xcassets */; };
 		B9B82A67288DB35200CBA53F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B9B82A65288DB35200CBA53F /* LaunchScreen.storyboard */; };
 		B9B82A6A288DB35200CBA53F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B9B82A69288DB35200CBA53F /* main.m */; };
+		B9B82A72288DB7A900CBA53F /* ScoreWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = B9B82A71288DB7A900CBA53F /* ScoreWriter.m */; };
+		B9B82A7B288DBD2C00CBA53F /* AVKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9B82A77288DBD2C00CBA53F /* AVKit.framework */; };
+		B9B82A7C288DBD2C00CBA53F /* AVFAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9B82A78288DBD2C00CBA53F /* AVFAudio.framework */; };
+		B9B82A7D288DBD2C00CBA53F /* AVRouting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9B82A79288DBD2C00CBA53F /* AVRouting.framework */; };
+		B9B82A7E288DBD2C00CBA53F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9B82A7A288DBD2C00CBA53F /* AVFoundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,12 +28,18 @@
 		B9B82A5A288DB35100CBA53F /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		B9B82A5B288DB35100CBA53F /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		B9B82A5D288DB35100CBA53F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		B9B82A5E288DB35100CBA53F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		B9B82A5E288DB35100CBA53F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; wrapsLines = 0; };
 		B9B82A61288DB35100CBA53F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		B9B82A63288DB35200CBA53F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B9B82A66288DB35200CBA53F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B9B82A68288DB35200CBA53F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B9B82A69288DB35200CBA53F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B9B82A70288DB7A900CBA53F /* ScoreWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScoreWriter.h; sourceTree = "<group>"; };
+		B9B82A71288DB7A900CBA53F /* ScoreWriter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ScoreWriter.m; sourceTree = "<group>"; };
+		B9B82A77288DBD2C00CBA53F /* AVKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVKit.framework; path = System/Library/Frameworks/AVKit.framework; sourceTree = SDKROOT; };
+		B9B82A78288DBD2C00CBA53F /* AVFAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFAudio.framework; path = System/Library/Frameworks/AVFAudio.framework; sourceTree = SDKROOT; };
+		B9B82A79288DBD2C00CBA53F /* AVRouting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVRouting.framework; path = System/Library/Frameworks/AVRouting.framework; sourceTree = SDKROOT; };
+		B9B82A7A288DBD2C00CBA53F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +47,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B9B82A7E288DBD2C00CBA53F /* AVFoundation.framework in Frameworks */,
+				B9B82A7B288DBD2C00CBA53F /* AVKit.framework in Frameworks */,
+				B9B82A7C288DBD2C00CBA53F /* AVFAudio.framework in Frameworks */,
+				B9B82A7D288DBD2C00CBA53F /* AVRouting.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,6 +62,7 @@
 			children = (
 				B9B82A56288DB35100CBA53F /* ToneBarrierScoreEditor */,
 				B9B82A55288DB35100CBA53F /* Products */,
+				B9B82A76288DBD2C00CBA53F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,6 +83,8 @@
 				B9B82A5B288DB35100CBA53F /* SceneDelegate.m */,
 				B9B82A5D288DB35100CBA53F /* ViewController.h */,
 				B9B82A5E288DB35100CBA53F /* ViewController.m */,
+				B9B82A70288DB7A900CBA53F /* ScoreWriter.h */,
+				B9B82A71288DB7A900CBA53F /* ScoreWriter.m */,
 				B9B82A60288DB35100CBA53F /* Main.storyboard */,
 				B9B82A63288DB35200CBA53F /* Assets.xcassets */,
 				B9B82A65288DB35200CBA53F /* LaunchScreen.storyboard */,
@@ -74,6 +92,17 @@
 				B9B82A69288DB35200CBA53F /* main.m */,
 			);
 			path = ToneBarrierScoreEditor;
+			sourceTree = "<group>";
+		};
+		B9B82A76288DBD2C00CBA53F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B9B82A78288DBD2C00CBA53F /* AVFAudio.framework */,
+				B9B82A7A288DBD2C00CBA53F /* AVFoundation.framework */,
+				B9B82A77288DBD2C00CBA53F /* AVKit.framework */,
+				B9B82A79288DBD2C00CBA53F /* AVRouting.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,6 +176,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B9B82A5F288DB35100CBA53F /* ViewController.m in Sources */,
+				B9B82A72288DB7A900CBA53F /* ScoreWriter.m in Sources */,
 				B9B82A59288DB35100CBA53F /* AppDelegate.m in Sources */,
 				B9B82A6A288DB35200CBA53F /* main.m in Sources */,
 				B9B82A5C288DB35100CBA53F /* SceneDelegate.m in Sources */,

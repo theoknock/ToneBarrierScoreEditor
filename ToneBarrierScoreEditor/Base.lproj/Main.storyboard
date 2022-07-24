@@ -1,24 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21208.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21191"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" alpha="0.20000000000000001" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="waveform.path" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="snt-Ms-6ia">
+                                <rect key="frame" x="0.0" y="5" width="390" height="845"/>
+                                <color key="tintColor" systemColor="linkColor"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zKs-PW-Q7j">
+                                <rect key="frame" x="104.66666666666669" y="367.33333333333331" width="181" height="119.33333333333331"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" image="play.rectangle" catalog="system">
+                                    <backgroundConfiguration key="background">
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <color key="strokeColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </backgroundConfiguration>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="87" weight="regular"/>
+                                    <color key="baseForegroundColor" systemColor="linkColor"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="togglePlayPause:forEvent:" destination="BYZ-38-t0r" eventType="touchDown" id="bIi-bW-ql4"/>
+                                </connections>
+                            </button>
+                            <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N94-eB-Jq8" customClass="AVRoutePickerView">
+                                <rect key="frame" x="139.66666666666666" y="750.33333333333337" width="110.66666666666666" height="59.666666666666629"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="N94-eB-Jq8" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="3lT-kL-HvM"/>
+                            <constraint firstItem="zKs-PW-Q7j" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="7Ga-gz-BeV"/>
+                            <constraint firstItem="zKs-PW-Q7j" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="C2d-vV-NHC"/>
+                            <constraint firstItem="snt-Ms-6ia" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="C3f-In-eOn"/>
+                            <constraint firstItem="snt-Ms-6ia" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="EgN-zT-UC3"/>
+                            <constraint firstItem="N94-eB-Jq8" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="Rg7-T3-Mgf"/>
+                            <constraint firstItem="snt-Ms-6ia" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="UBf-a7-JRH"/>
+                            <constraint firstItem="N94-eB-Jq8" firstAttribute="height" secondItem="zKs-PW-Q7j" secondAttribute="height" multiplier="0.5" id="s5s-A9-WWS"/>
+                            <constraint firstItem="N94-eB-Jq8" firstAttribute="width" secondItem="6Tk-OE-BBY" secondAttribute="width" multiplier="0.28436" id="y6i-m5-Gq2"/>
+                            <constraint firstItem="snt-Ms-6ia" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="zKL-HJ-pKu"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="playPauseButton" destination="zKs-PW-Q7j" id="6vQ-VO-tQ5"/>
+                        <outlet property="routePicker" destination="N94-eB-Jq8" id="5yM-sB-vq2"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="140" y="-16"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="play.rectangle" catalog="system" width="128" height="93"/>
+        <image name="waveform.path" catalog="system" width="128" height="113"/>
+        <systemColor name="linkColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
