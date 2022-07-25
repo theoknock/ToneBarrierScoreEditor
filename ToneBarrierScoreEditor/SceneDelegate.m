@@ -20,6 +20,9 @@
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
     // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
     // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:FALSE];
+    });
 }
 
 
@@ -35,8 +38,11 @@
     // Called when the scene has moved from an inactive state to an active state.
     // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
     dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"[ScoreWriter.score.nowPlayingInfoCenter playbackState] == %lu", [ScoreWriter.score.nowPlayingInfoCenter playbackState]);
+        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.nowPlayingInfoCenter playbackState] != MPNowPlayingPlaybackStateUnknown) && ([ScoreWriter.score.engine isRunning])]; // works perfectly except at launch
         [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
-        [[(ViewController *)[_window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.engine isRunning])];
+        
+        //        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.session setActive:(((![ScoreWriter.score.engine isRunning]) && ^ BOOL { [ScoreWriter.score.engine startAndReturnError:&error]; return ([ScoreWriter.score.engine isRunning]); }()) || ^ BOOL { [ScoreWriter.score.engine stop]; return ([ScoreWriter.score.engine isRunning]); }()) error:&error]) & [ScoreWriter.score.engine isRunning]];
     });
 }
 
@@ -51,10 +57,6 @@
 - (void)sceneWillEnterForeground:(UIScene *)scene {
     // Called as the scene transitions from the background to the foreground.
     // Use this method to undo the changes made on entering the background.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
-        [[(ViewController *)[_window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.engine isRunning])];
-    });
 }
 
 

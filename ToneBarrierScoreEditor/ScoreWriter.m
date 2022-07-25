@@ -163,7 +163,7 @@ static ScoreWriter *score = NULL;
     dispatch_async(dispatch_get_main_queue(), ^{
         [button setSelected:([self.session setActive:(((![_engine isRunning]) && ^ BOOL { [_engine startAndReturnError:&error]; return ([_engine isRunning]); }()) || ^ BOOL { [_engine stop]; return ([_engine isRunning]); }()) error:&error]) & [_engine isRunning]];
     });
-    return (!error);
+    return (!error && button.isSelected);
 }
 
 @end
