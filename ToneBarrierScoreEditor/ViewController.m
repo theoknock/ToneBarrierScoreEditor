@@ -21,7 +21,7 @@
     [super viewDidLoad];
     
     [self.playPauseButton setImage:[UIImage systemImageNamed:@"pause"] forState:UIControlStateSelected];
-    [self.playPauseButton setImage:[UIImage systemImageNamed:@"play"]  forState:UIControlStateNormal];
+    [self.playPauseButton setImage:[UIImage systemImageNamed:@"play.circle"]  forState:UIControlStateNormal];
     [self.playPauseButton setImage:[UIImage systemImageNamed:@"play.slash"]   forState:UIControlStateDisabled];
     
     [self.routePicker setDelegate:(id<AVRoutePickerViewDelegate> _Nullable)ScoreWriter.score];

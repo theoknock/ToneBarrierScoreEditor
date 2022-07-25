@@ -47,14 +47,14 @@ static ScoreWriter *score = NULL;
 {
     if (self = [super init]) {
         
-        [self configureAudioSession];
-        
         [self configureAudioSourceNode];
         
         self.engine = [[AVAudioEngine alloc] init];
         [self.engine attachNode:self.sineWaveGenerator];
         [self.engine connect:self.sineWaveGenerator to:self.engine.mainMixerNode format:nil];
         self.engine.mainMixerNode.outputVolume = 1.0;
+        
+        [self configureAudioSession];
         
         [self configureLockScreenControls];
     }
@@ -67,8 +67,9 @@ static ScoreWriter *score = NULL;
     
     @try {
         __autoreleasing NSError *error = nil;
-        [self.session setCategory:AVAudioSessionCategoryPlayback error:&error];
-        [self.session setMode:AVAudioSessionModeDefault error:&error];
+//        [self.session setCategory:AVAudioSessionCategoryPlayback error:&error];
+//        [self.session setMode:AVAudioSessionModeDefault error:&error];
+        [self.session setCategory:AVAudioSessionCategoryPlayAndRecord mode:AVAudioSessionModeDefault options:AVAudioSessionCategoryOptionDefaultToSpeaker error:&error];
         [self.session setSupportsMultichannelContent:TRUE error:&error];
         [self.session setPreferredInputNumberOfChannels:2 error:&error];
         [self.session setPreferredOutputNumberOfChannels:2 error:&error];
@@ -152,15 +153,14 @@ static ScoreWriter *score = NULL;
 
 - (oneway void)handleAudioRouteChange:(NSNotification *)notification {
     printf("\n%s\t\tsample rate == %f\n", __PRETTY_FUNCTION__, [self.session sampleRate]);
-
-    // To-Do: change sample rate based on destination audio device bandwidth(?)
+    // To reference the playPauseButton in ViewController:
+    //      ((ViewController *)[[[[UIApplication sharedApplication] delegate] window] rootViewController]).playPauseButton
 }
 
 - (BOOL)toggleAudioEngineRunningStatus:(UIButton *)button
 {
     __block NSError * error = nil;
     dispatch_async(dispatch_get_main_queue(), ^{
-        
         [button setSelected:([self.session setActive:(((![_engine isRunning]) && ^ BOOL { [_engine startAndReturnError:&error]; return ([_engine isRunning]); }()) || ^ BOOL { [_engine stop]; return ([_engine isRunning]); }()) error:&error]) & [_engine isRunning]];
     });
     return (!error);
