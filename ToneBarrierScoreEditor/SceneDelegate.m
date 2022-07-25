@@ -38,8 +38,7 @@
     // Called when the scene has moved from an inactive state to an active state.
     // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"[ScoreWriter.score.nowPlayingInfoCenter playbackState] == %lu", [ScoreWriter.score.nowPlayingInfoCenter playbackState]);
-        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.nowPlayingInfoCenter playbackState] != MPNowPlayingPlaybackStateUnknown) && ([ScoreWriter.score.engine isRunning])]; // works perfectly except at launch
+        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.engine isRunning])]; // works perfectly except at launch
         [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
         
         //        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.session setActive:(((![ScoreWriter.score.engine isRunning]) && ^ BOOL { [ScoreWriter.score.engine startAndReturnError:&error]; return ([ScoreWriter.score.engine isRunning]); }()) || ^ BOOL { [ScoreWriter.score.engine stop]; return ([ScoreWriter.score.engine isRunning]); }()) error:&error]) & [ScoreWriter.score.engine isRunning]];
@@ -50,7 +49,6 @@
 - (void)sceneWillResignActive:(UIScene *)scene {
     // Called when the scene will move from an active state to an inactive state.
     // This may occur due to temporary interruptions (ex. an incoming phone call).
-    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 }
 
 
