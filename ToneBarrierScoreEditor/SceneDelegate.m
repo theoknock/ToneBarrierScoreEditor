@@ -38,10 +38,8 @@
     // Called when the scene has moved from an inactive state to an active state.
     // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.engine isRunning])]; // works perfectly except at launch
+        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.engine isRunning])];
         [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
-        
-        //        [[(ViewController *)[self.window rootViewController] playPauseButton] setSelected:([ScoreWriter.score.session setActive:(((![ScoreWriter.score.engine isRunning]) && ^ BOOL { [ScoreWriter.score.engine startAndReturnError:&error]; return ([ScoreWriter.score.engine isRunning]); }()) || ^ BOOL { [ScoreWriter.score.engine stop]; return ([ScoreWriter.score.engine isRunning]); }()) error:&error]) & [ScoreWriter.score.engine isRunning]];
     });
 }
 
@@ -62,7 +60,9 @@
     // Called as the scene transitions from the foreground to the background.
     // Use this method to save data, release shared resources, and store enough scene-specific state information
     // to restore the scene back to its current state.
-    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+    });
 }
 
 

@@ -125,14 +125,20 @@ static ScoreWriter *score = NULL;
     [nowPlayingInfo setObject:@"ToneBarrier" forKey:MPMediaItemPropertyTitle];
     [nowPlayingInfo setObject:(NSString *)@"James Alan Bush" forKey:MPMediaItemPropertyArtist];
     [nowPlayingInfo setObject:(NSString *)@"The Life of a Demoniac" forKey:MPMediaItemPropertyAlbumTitle];
-    MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithBoundsSize:CGSizeMake(180.0, 180.0) requestHandler:^ UIImage * _Nonnull (CGSize size) {
-        
-        UIImage * image;
-        [(image = [UIImage systemImageNamed:@"waveform.path"
-                          withConfiguration:[[UIImageSymbolConfiguration configurationWithPointSize:size.width weight:UIImageSymbolWeightLight] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor colorWithRed:0.f green:122.f/255.f blue:1.f alpha:.2f]]]]) imageByPreparingForDisplay];
-        return image;
-    }];
     
+    static UIImage * image;
+    
+    MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithImage:(image = [UIImage imageNamed:@"WaveIcon"])];// systemImageNamed:@"AppIcon" withConfiguration:nil]];
+//                                   initWithBoundsSize:CGSizeMake(180.0, 180.0) requestHandler:^ UIImage * _Nonnull (CGSize size) {
+//        static UIImage * image;
+////        [[(image = [UIImage systemImageNamed:@"waveform.path"]) imageByApplyingSymbolConfiguration:[[UIImageSymbolConfiguration configurationWithPointSize:size.width weight:UIImageSymbolWeightLight] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor colorWithRed:0.f green:122.f/255.f blue:1.f alpha:1.f]]]] imageByPreparingForDisplay];
+//        [(image = [UIImage systemImageNamed:@"waveform.path"
+//                          withConfiguration:[[UIImageSymbolConfiguration configurationWithPointSize:size.width weight:UIImageSymbolWeightLight] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor colorWithRed:0.f green:122.f/255.f blue:1.f alpha:1.f]]]]) imageByPreparingForDisplay];
+//        [nowPlayingInfo setObject:image forKey:MPMediaItemPropertyArtwork];
+//        return image;
+//    }];
+    
+//    static UIImage * image;
     [nowPlayingInfo setObject:(MPMediaItemArtwork *)artwork forKey:MPMediaItemPropertyArtwork];
     
     [(_nowPlayingInfoCenter = [MPNowPlayingInfoCenter defaultCenter]) setNowPlayingInfo:(NSDictionary<NSString *,id> * _Nullable)nowPlayingInfo];
