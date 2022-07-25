@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "WaveIconLinkColorDarkBg.png",
+      "filename" : "WaveIconLinkColorDarkBgALpha20-PS 2.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "WaveIconLinkColorDarkBg 1.png",
+      "filename" : "WaveIconLinkColorDarkBgALpha20-PS 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "WaveIconLinkColorDarkBg 2.png",
+      "filename" : "WaveIconLinkColorDarkBgALpha20-PS.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
