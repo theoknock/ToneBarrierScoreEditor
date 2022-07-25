@@ -91,10 +91,15 @@ static ScoreWriter *score = NULL;
     self.session = [AVAudioSession sharedInstance];
     
     __autoreleasing NSError *error = nil;
-    [self.session setSupportsMultichannelContent:TRUE error:&error];
+    
     [self.session setCategory:AVAudioSessionCategoryPlayback error:&error];
     [self.session setMode:AVAudioSessionModeDefault error:&error];
-    [self.session setActive:YES error:&error];
+    
+    [self.session setSupportsMultichannelContent:TRUE error:&error];
+    [self.session setPreferredInputNumberOfChannels:2 error:&error];
+    [self.session setPreferredOutputNumberOfChannels:2 error:&error];
+    
+    
     
     if (error) printf("\nError configuring audio session: %s\n\n", [error.debugDescription UTF8String]);
 }
@@ -117,8 +122,8 @@ static ScoreWriter *score = NULL;
     [(_nowPlayingInfoCenter = [MPNowPlayingInfoCenter defaultCenter]) setNowPlayingInfo:(NSDictionary<NSString *,id> * _Nullable)nowPlayingInfo];
     
     MPRemoteCommandHandlerStatus (^remote_command_handler)(MPRemoteCommandEvent * _Nonnull) = ^ MPRemoteCommandHandlerStatus (MPRemoteCommandEvent * _Nonnull event) {
-        __autoreleasing NSError * error = nil;
-        [_nowPlayingInfoCenter setPlaybackState:((![_engine isRunning]) && [_engine startAndReturnError:&error]) || ^ BOOL { [_engine stop]; return [_engine isRunning]; }() ? MPNowPlayingPlaybackStatePlaying : MPNowPlayingPlaybackStateStopped];
+        __block NSError * error = nil;
+        [_nowPlayingInfoCenter setPlaybackState:((![_engine isRunning]) && ^ BOOL { [_engine startAndReturnError:&error]; return [self.session setActive:YES error:&error]; }()) || ^ BOOL { [_engine stop]; return [_engine isRunning]; }() ? MPNowPlayingPlaybackStatePlaying : MPNowPlayingPlaybackStateStopped];
         return (!error) ? MPRemoteCommandHandlerStatusSuccess : MPRemoteCommandHandlerStatusCommandFailed;
     };
     
@@ -132,12 +137,14 @@ static ScoreWriter *score = NULL;
 
 - (oneway void)handleAudioRouteChange:(NSNotification *)notification {
     printf("\n%s\n", __PRETTY_FUNCTION__);
+    // To-Do: change sample rate based on destination audio device bandwidth(?)
 }
 
 - (oneway void)toggleAudioEngineRunningStatus:(UIButton *)button
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [button setSelected:((![_engine isRunning]) && [_engine startAndReturnError:nil]) || ^ BOOL { [_engine stop]; return [_engine isRunning]; }()];
+        __block NSError * error = nil;
+        [button setSelected:((![_engine isRunning]) && ^ BOOL { [_engine startAndReturnError:&error]; return [self.session setActive:YES error:&error]; }()) || ^ BOOL { [_engine stop]; return [_engine isRunning]; }()];
     });
 }
 

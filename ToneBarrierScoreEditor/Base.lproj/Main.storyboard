@@ -21,15 +21,15 @@
                                 <color key="tintColor" systemColor="linkColor"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zKs-PW-Q7j">
-                                <rect key="frame" x="104.66666666666669" y="367.33333333333331" width="181" height="119.33333333333331"/>
+                                <rect key="frame" x="134.66666666666666" y="368" width="120.66666666666666" height="118"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" image="play.rectangle" catalog="system">
+                                <buttonConfiguration key="configuration" style="plain" image="play.slash" catalog="system">
                                     <backgroundConfiguration key="background">
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <color key="strokeColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </backgroundConfiguration>
-                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="87" weight="regular"/>
+                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="87" weight="light"/>
                                     <color key="baseForegroundColor" systemColor="linkColor"/>
                                 </buttonConfiguration>
                                 <connections>
@@ -37,7 +37,7 @@
                                 </connections>
                             </button>
                             <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N94-eB-Jq8" customClass="AVRoutePickerView">
-                                <rect key="frame" x="139.66666666666666" y="750.33333333333337" width="110.66666666666666" height="59.666666666666629"/>
+                                <rect key="frame" x="139.66666666666666" y="751" width="110.66666666666666" height="59"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                         </subviews>
@@ -67,7 +67,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="play.rectangle" catalog="system" width="128" height="93"/>
+        <image name="play.slash" catalog="system" width="117" height="128"/>
         <image name="waveform.path" catalog="system" width="128" height="113"/>
         <systemColor name="linkColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
