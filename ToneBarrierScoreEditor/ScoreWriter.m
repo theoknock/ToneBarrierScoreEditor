@@ -28,7 +28,6 @@ static Float32 (^rescale)(Float32) = ^ Float32 (Float32 distributed_random) {
 
 static Float32 (^whiteNoise)(void);
 
-
 static ScoreWriter *score = NULL;
 + (nonnull ScoreWriter *)score
 {
@@ -49,32 +48,8 @@ static ScoreWriter *score = NULL;
     if (self = [super init]) {
         
         [self configureAudioSession];
-
-        __block Float32 theta = 0.f;
-        __block Float32 harmonic_theta = 0.f;
-        const Float32 frequency = 550; // left
-        const Float32 harmonic_frequency = 440; // right
-        const Float32 sampleRate = 48000.f;
-        const Float32 amplitude = 1.f;
-        const Float32 M_PI_SQR = 2.f * M_PI;
         
-        self.sineWaveGenerator = [[AVAudioSourceNode alloc] initWithRenderBlock:^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull outputData) {
-            Float32 theta_increment = M_PI_SQR * frequency / sampleRate;
-            Float32 harmonic_theta_increment = M_PI_SQR * harmonic_frequency / sampleRate;
-            Float32 * buffer_left = (Float32 *)outputData->mBuffers[0].mData;
-            Float32 * harmonic_buffer_right = (Float32 *)outputData->mBuffers[1].mData;
-            for (AVAudioFrameCount frame = 0; frame < frameCount; frame++)
-            {
-                buffer_left[frame] = sin(theta) * amplitude;
-                theta += theta_increment;
-                !(theta > M_PI_SQR) ?: (theta -= M_PI_SQR);
-                
-                harmonic_buffer_right[frame] = sin(harmonic_theta) * amplitude;
-                harmonic_theta += harmonic_theta_increment;
-                !(harmonic_theta > M_PI_SQR) ?: (harmonic_theta -= M_PI_SQR);
-            }
-            return (OSStatus)noErr;
-        }];
+        [self configureAudioSourceNode];
         
         self.engine = [[AVAudioEngine alloc] init];
         [self.engine attachNode:self.sineWaveGenerator];
@@ -90,18 +65,58 @@ static ScoreWriter *score = NULL;
 - (oneway void)configureAudioSession {
     self.session = [AVAudioSession sharedInstance];
     
-    __autoreleasing NSError *error = nil;
+    @try {
+        __autoreleasing NSError *error = nil;
+        [self.session setCategory:AVAudioSessionCategoryPlayback error:&error];
+        [self.session setMode:AVAudioSessionModeDefault error:&error];
+        [self.session setSupportsMultichannelContent:TRUE error:&error];
+        [self.session setPreferredInputNumberOfChannels:2 error:&error];
+        [self.session setPreferredOutputNumberOfChannels:2 error:&error];
+        
+        !(!error) ?: ^ (NSError ** error_t) {
+            printf("Error configuring audio session:\n\t%s\n", [[*error_t debugDescription] UTF8String]);
+            NSException* exception = [NSException
+                                      exceptionWithName:(*error_t).domain
+                                      reason:(*error_t).localizedDescription
+                                      userInfo:@{@"Error Code" : @((*error_t).code)}];
+            @throw exception;
+        }(&error);
+    } @catch (NSException *exception) {
+        printf("Exception configuring audio session:\n\t%s\n\t%s\n\t%lu",
+              [exception.name UTF8String],
+              [exception.reason UTF8String],
+              ((NSNumber *)[exception.userInfo valueForKey:@"Error Code"]).unsignedIntegerValue);
+    }
+}
+
+- (void)configureAudioSourceNode {
+    __block Float32 theta = 0.f;
+    __block Float32 harmonic_theta = 0.f;
+    const Float32 sample_rate = 44100.f;
+    const Float32 frequency = 550; // left
+    const Float32 harmonic_frequency = 440; // right
+    const Float32 amplitude = 1.f;
+    const Float32 M_PI_SQR = 2.f * M_PI;
     
-    [self.session setCategory:AVAudioSessionCategoryPlayback error:&error];
-    [self.session setMode:AVAudioSessionModeDefault error:&error];
-    
-    [self.session setSupportsMultichannelContent:TRUE error:&error];
-    [self.session setPreferredInputNumberOfChannels:2 error:&error];
-    [self.session setPreferredOutputNumberOfChannels:2 error:&error];
-    
-    
-    
-    if (error) printf("\nError configuring audio session: %s\n\n", [error.debugDescription UTF8String]);
+    self.sineWaveGenerator = [[AVAudioSourceNode alloc] initWithRenderBlock:^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull outputData) {
+        Float32 theta_increment = M_PI_SQR * frequency / sample_rate;
+        Float32 harmonic_theta_increment = M_PI_SQR * harmonic_frequency / sample_rate;
+        Float32 * buffer_left = (Float32 *)outputData->mBuffers[0].mData;
+        Float32 * harmonic_buffer_right = (Float32 *)outputData->mBuffers[1].mData;
+        
+//        printf("\naudio_format.sampleRate == %f\nframeCount == %u\n", self.session.sampleRate, frameCount);
+        for (AVAudioFrameCount frame = 0; frame < frameCount; frame++)
+        {
+            buffer_left[frame] = sin(theta) * amplitude;
+            theta += theta_increment;
+            !(theta > M_PI_SQR) ?: (theta -= M_PI_SQR);
+            
+            harmonic_buffer_right[frame] = sin(harmonic_theta) * amplitude;
+            harmonic_theta += harmonic_theta_increment;
+            !(harmonic_theta > M_PI_SQR) ?: (harmonic_theta -= M_PI_SQR);
+        }
+        return (OSStatus)noErr;
+    }];
 }
 
 - (oneway void)configureLockScreenControls {
@@ -123,7 +138,7 @@ static ScoreWriter *score = NULL;
     
     MPRemoteCommandHandlerStatus (^remote_command_handler)(MPRemoteCommandEvent * _Nonnull) = ^ MPRemoteCommandHandlerStatus (MPRemoteCommandEvent * _Nonnull event) {
         __block NSError * error = nil;
-        [_nowPlayingInfoCenter setPlaybackState:((![_engine isRunning]) && ^ BOOL { [_engine startAndReturnError:&error]; return [self.session setActive:YES error:&error]; }()) || ^ BOOL { [_engine stop]; return [_engine isRunning]; }() ? MPNowPlayingPlaybackStatePlaying : MPNowPlayingPlaybackStateStopped];
+        [_nowPlayingInfoCenter setPlaybackState:([self.session setActive:(((![_engine isRunning]) && ^ BOOL { return ([_engine startAndReturnError:&error]); }()) || ^ BOOL { [_engine stop]; return ([_engine isRunning]); }()) error:&error] & [_engine isRunning]) ? MPNowPlayingPlaybackStatePlaying : MPNowPlayingPlaybackStateStopped];
         return (!error) ? MPRemoteCommandHandlerStatusSuccess : MPRemoteCommandHandlerStatusCommandFailed;
     };
     
@@ -136,16 +151,19 @@ static ScoreWriter *score = NULL;
 }
 
 - (oneway void)handleAudioRouteChange:(NSNotification *)notification {
-    printf("\n%s\n", __PRETTY_FUNCTION__);
+    printf("\n%s\t\tsample rate == %f\n", __PRETTY_FUNCTION__, [self.session sampleRate]);
+
     // To-Do: change sample rate based on destination audio device bandwidth(?)
 }
 
-- (oneway void)toggleAudioEngineRunningStatus:(UIButton *)button
+- (BOOL)toggleAudioEngineRunningStatus:(UIButton *)button
 {
+    __block NSError * error = nil;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __block NSError * error = nil;
-        [button setSelected:((![_engine isRunning]) && ^ BOOL { [_engine startAndReturnError:&error]; return [self.session setActive:YES error:&error]; }()) || ^ BOOL { [_engine stop]; return [_engine isRunning]; }()];
+        
+        [button setSelected:([self.session setActive:(((![_engine isRunning]) && ^ BOOL { [_engine startAndReturnError:&error]; return ([_engine isRunning]); }()) || ^ BOOL { [_engine stop]; return ([_engine isRunning]); }()) error:&error]) & [_engine isRunning]];
     });
+    return (!error);
 }
 
 @end

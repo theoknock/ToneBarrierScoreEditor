@@ -24,7 +24,8 @@
     [self.playPauseButton setImage:[UIImage systemImageNamed:@"play"]  forState:UIControlStateNormal];
     [self.playPauseButton setImage:[UIImage systemImageNamed:@"play.slash"]   forState:UIControlStateDisabled];
     
-    [self.routePicker setDelegate:(id<AVRoutePickerViewDelegate> _Nullable)self];
+    [self.routePicker setDelegate:(id<AVRoutePickerViewDelegate> _Nullable)ScoreWriter.score];
+    [[NSNotificationCenter defaultCenter] addObserver:ScoreWriter.score selector:@selector(handleAudioRouteChange:) name:AVAudioSessionRouteChangeNotification object:ScoreWriter.score.session];
 }
 
 - (IBAction)togglePlayPause:(UIButton *)sender forEvent:(UIEvent *)event {

@@ -14,7 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ScoreWriter : NSObject
+@interface ScoreWriter : NSObject <AVRoutePickerViewDelegate>
 
 + (nonnull ScoreWriter *)score;
 
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) MPRemoteCommandCenter  * remoteCommandCenter;
 
 - (oneway void)handleAudioRouteChange:(NSNotification *)notification;
-- (oneway void)toggleAudioEngineRunningStatus:(UIButton *)button;
+- (BOOL)toggleAudioEngineRunningStatus:(UIButton *)button;
 
 
 @end
