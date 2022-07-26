@@ -25,6 +25,94 @@ id (^(^retain_object_)(id(^)(void)))(void) = ^ (id(^retainable_object)(void)) {
 };
 
 unsigned long counter = 0;
+unsigned int
+ones32(register unsigned int x)
+{
+        /* 32-bit recursive reduction using SWAR...
+       but first step is mapping 2-bit values
+       into sum of 2 1-bit values in sneaky way
+    */
+        x -= ((x >> 1) & 0x55555555);
+        x = (((x >> 2) & 0x33333333) + (x & 0x33333333));
+        x = (((x >> 4) + x) & 0x0f0f0f0f);
+        x += (x >> 8);
+        x += (x >> 16);
+        return(x & 0x0000003f);
+}
+
+unsigned int
+floor_log2(register unsigned int x)
+{
+        x |= (x >> 1);
+        x |= (x >> 2);
+        x |= (x >> 4);
+        x |= (x >> 8);
+        x |= (x >> 16);
+#ifdef    LOG0UNDEFINED
+        return(ones32(x) - 1);
+#else
+    return(ones32(x >> 1));
+#endif
+}
+
+int ilog2(int x) {
+
+    int byte_count = 0;
+    int y = 0;
+
+    //Shift right 8
+    y = x>>0x8;
+    byte_count += ((!!y)<<3);
+
+    //Shift right 16
+    y = x>>0x10;
+    byte_count += ((!!y)<<3);
+
+    //Shift right 24 and mask to adjust for arithmetic shift
+    y = (x>>0x18)&0xff;
+    byte_count += ((!!y)<<3);
+
+
+    x = (x>>byte_count) & 0xff;
+
+    x = x>>1;
+    byte_count += !!x;
+    x = x>>1;
+    byte_count += !!x;
+    x = x>>1;
+    byte_count += !!x;
+    x = x>>1;
+    byte_count += !!x;
+    x = x>>1;
+    byte_count += !!x;
+    x = x>>1;
+    byte_count += !!x;
+    x = x>>1;
+    byte_count += !!x;
+    x = x>>1;            //8
+    byte_count += !!x;
+
+
+    return byte_count;
+
+}
+
+// To-do:
+//      1. Store each bit in a simd vector
+//      2. Create a bit mask of equal length and initialize each element with a value of 1
+//      3. Write a block that 1) takes the vector and mask and 2) applies a simd-bitwise operator to each element-pair that returns false whenever a vector element is 0; and, 3) increments a global counter variable to total the nummber of 1's
+//      4. When the block finishes
+
+
+int bitCount2(int i) {
+    i = i - ((i >> 1) & 0x55555555);
+    i = (i & 0x33333333) + ((i >> 2) & 0x33333333);
+    i = (i + (i >> 4)) & 0x0f0f0f0f;
+    i = i + (i >> 8);
+    i = i + (i >> 16);
+    return i & 0x3f;
+}
+
 
 static typeof(unsigned long (^)(unsigned long)) recursive_iterator_;
 static void (^(^iterator_)(const unsigned long))(id(^)(void)) = ^ (const unsigned long object_count) {
@@ -34,11 +122,10 @@ static void (^(^iterator_)(const unsigned long))(id(^)(void)) = ^ (const unsigne
         NSLog(@"\nretained_objects_t == %p\n", &retained_objects_t);
         return ^ (id(^object)(void)) {
             NSLog(@"\nobject == %p\n", &object);
-//            typeof(recursive_iterator_) recursive_iterator_t;
             recursive_iterator_ = ^ unsigned long (unsigned long index) {
-                printf("object %lu (or %lu) of %lu\n", index, [(NSNumber *)(object()) unsignedLongValue], object_count);
-                return (index & 1UL) && (unsigned long)(recursive_iterator_)((index >>= 1));
-            }; (recursive_iterator_)((unsigned long)(~(1UL << (object_count + 1))));
+                printf("index population count == %lu (object %lu of %lu)\n", index, [(NSNumber *)(object()) unsignedLongValue], object_count);
+                return ((index) >> 1UL) && (recursive_iterator_)((index) >> 1UL);
+            }; (recursive_iterator_)((1UL << object_count) >> 1UL);
         };
     }((id *)&retained_objects_ref);
 };
@@ -50,7 +137,7 @@ static void (^(^iterator_)(const unsigned long))(id(^)(void)) = ^ (const unsigne
         return number;
     };
     
-    iterator_(10)(object_);
+    iterator_(5)(object_);
 }
 
 /*
