@@ -34,10 +34,11 @@ static void (^(^iterator_)(const unsigned long))(id(^)(void)) = ^ (const unsigne
         NSLog(@"\nretained_objects_t == %p\n", &retained_objects_t);
         return ^ (id(^object)(void)) {
             NSLog(@"\nobject == %p\n", &object);
+//            typeof(recursive_iterator_) recursive_iterator_t;
             recursive_iterator_ = ^ unsigned long (unsigned long index) {
                 printf("object %lu (or %lu) of %lu\n", index, [(NSNumber *)(object()) unsignedLongValue], object_count);
-                return (index != 0) && (unsigned long)recursive_iterator_((index = index - 1));
-            }; recursive_iterator_(object_count);
+                return (index & 1UL) && (unsigned long)(recursive_iterator_)((index >>= 1));
+            }; (recursive_iterator_)((unsigned long)(~(1UL << (object_count + 1))));
         };
     }((id *)&retained_objects_ref);
 };
