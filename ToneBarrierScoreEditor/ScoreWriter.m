@@ -115,17 +115,17 @@ int bitCount2(int i) {
 
 
 static typeof(unsigned long (^)(unsigned long)) recursive_iterator_;
-static void (^(^iterator_)(const unsigned long))(id(^)(void)) = ^ (const unsigned long object_count) {
+static unsigned long (^(^iterator_)(const unsigned long))(id(^)(void)) = ^ (const unsigned long object_count) {
     NSLog(@"\niterator object_count == %lu\n", object_count);
     typeof(id(^)(void)) retained_objects_ref;
     return ^ (id * retained_objects_t) {
         NSLog(@"\nretained_objects_t == %p\n", &retained_objects_t);
         return ^ (id(^object)(void)) {
             NSLog(@"\nobject == %p\n", &object);
-            recursive_iterator_ = ^ unsigned long (unsigned long index) {
+            return (recursive_iterator_ = ^ unsigned long (unsigned long index) {
                 printf("index population count == %lu (object %lu of %lu)\n", index, [(NSNumber *)(object()) unsignedLongValue], object_count);
                 return ((index) >> 1UL) && (recursive_iterator_)((index) >> 1UL);
-            }; (recursive_iterator_)((1UL << object_count) >> 1UL);
+            })((1UL << object_count) >> 1UL);
         };
     }((id *)&retained_objects_ref);
 };
