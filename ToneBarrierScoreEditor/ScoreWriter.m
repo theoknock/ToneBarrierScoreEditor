@@ -11,6 +11,51 @@
 
 @implementation ScoreWriter
 
+id (^retainable_object_)(id(^)(void)) = ^ id (id(^object)(void)) {
+    return ^{
+        return object();
+    };
+};
+
+id (^(^retain_object_)(id(^)(void)))(void) = ^ (id(^retainable_object)(void)) {
+    id retained_object = retainable_object();
+    return ^ id {
+        return retained_object;
+    };
+};
+
+unsigned long counter = 0;
+
+static typeof(unsigned long (^)(unsigned long)) recursive_iterator_;
+static void (^(^iterator_)(const unsigned long))(id(^)(void)) = ^ (const unsigned long object_count) {
+    NSLog(@"\niterator object_count == %lu\n", object_count);
+    typeof(id(^)(void)) retained_objects_ref;
+    return ^ (id * retained_objects_t) {
+        NSLog(@"\nretained_objects_t == %p\n", &retained_objects_t);
+        return ^ (id(^object)(void)) {
+            NSLog(@"\nobject == %p\n", &object);
+            recursive_iterator_ = ^ unsigned long (unsigned long index) {
+                printf("object %lu (or %lu) of %lu\n", index, [(NSNumber *)(object()) unsignedLongValue], object_count);
+                return (index != 0) && (unsigned long)recursive_iterator_((index = index - 1));
+            }; recursive_iterator_(object_count);
+        };
+    }((id *)&retained_objects_ref);
+};
+
+- (void)test_iterator {
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+    id (^object_)(void) = ^{
+        NSNumber * number = @(++counter);
+        return number;
+    };
+    
+    iterator_(10)(object_);
+}
+
+/*
+ -----------------------------------------------------
+ */
+
 static Float32 (^(^(^randomize)(void))(Float32(^)(Float32)))(void) = ^{
     srand48((unsigned int)time(0));
     return ^ (Float32(^scale)(Float32)) {
@@ -21,12 +66,29 @@ static Float32 (^(^(^randomize)(void))(Float32(^)(Float32)))(void) = ^{
     };
 };
 
-static Float32 (^rescale)(Float32) = ^ Float32 (Float32 distributed_random) {
-    Float32 range_max = 1.f, range_min = -1.f;
-    return (distributed_random = (distributed_random * (range_max - range_min)) + range_min);
+static double (^note)(double) = ^ double (double distributed_random_value) {
+    return distributed_random_value; //(distributed_random_value = pow(1.059463094f, distributed_random_value) * 440.0);
 };
 
-static Float32 (^whiteNoise)(void);
+static double (^random_value_distributor)(double) = ^ double (double random_value) {
+    double range_max = 880, range_min = 440;
+    return (random_value = (random_value * (range_max - range_min)) + range_min);
+};
+
+static double (^(^(^random_value_generator)(double(^)(double)))(double(^)(double)))(void) = ^ (double(^distributor)(double)) {
+    srand48((unsigned int)time(0));
+    return ^ (double(^number)(double)) {
+        static double random;
+        return ^ double {
+            return number(distributor((random = drand48())));
+        };
+    };
+};
+
+/*
+ -----------------------------------------------------
+ */
+
 
 static ScoreWriter *score = NULL;
 + (nonnull ScoreWriter *)score
@@ -46,6 +108,7 @@ static ScoreWriter *score = NULL;
 - (instancetype)init
 {
     if (self = [super init]) {
+        [self test_iterator];
         
         [self configureAudioSourceNode];
         
@@ -91,22 +154,32 @@ static ScoreWriter *score = NULL;
 }
 
 - (void)configureAudioSourceNode {
+    // Tone Barrier Score: two-second tone-pair dyad spec: https://lucid.app/lucidchart/f0bddc19-d731-45d6-9add-161efa37149c/edit?viewport_loc=-68%2C707%2C1916%2C1085%2C0_0&invitationId=inv_c87eb120-ece2-4394-81af-1833f78d5577#
+    
+    // Signal-generation parameters
+    
+    double (^distributed_random_value)(void) = random_value_generator(random_value_distributor)(note);
+
+    
     __block Float32 theta = 0.f;
     __block Float32 harmonic_theta = 0.f;
     const Float32 sample_rate = 44100.f;
-    const Float32 frequency = 550; // left
-    const Float32 harmonic_frequency = 440; // right
+    __block Float32 frequency = distributed_random_value(); // left
+    __block Float32 harmonic_frequency = distributed_random_value(); // right
     const Float32 amplitude = 1.f;
     const Float32 M_PI_SQR = 2.f * M_PI;
+    
+    // Tone set A and B
+    
     
     self.sineWaveGenerator = [[AVAudioSourceNode alloc] initWithRenderBlock:^OSStatus(BOOL * _Nonnull isSilence, const AudioTimeStamp * _Nonnull timestamp, AVAudioFrameCount frameCount, AudioBufferList * _Nonnull outputData) {
         Float32 theta_increment = M_PI_SQR * frequency / sample_rate;
         Float32 harmonic_theta_increment = M_PI_SQR * harmonic_frequency / sample_rate;
         Float32 * buffer_left = (Float32 *)outputData->mBuffers[0].mData;
         Float32 * harmonic_buffer_right = (Float32 *)outputData->mBuffers[1].mData;
-        
-//        printf("\naudio_format.sampleRate == %f\nframeCount == %u\n", self.session.sampleRate, frameCount);
-        for (AVAudioFrameCount frame = 0; frame < frameCount; frame++)
+
+        AVAudioFrameCount frame = 0;
+        for (; frame < frameCount;)
         {
             buffer_left[frame] = sin(theta) * amplitude;
             theta += theta_increment;
@@ -115,7 +188,13 @@ static ScoreWriter *score = NULL;
             harmonic_buffer_right[frame] = sin(harmonic_theta) * amplitude;
             harmonic_theta += harmonic_theta_increment;
             !(harmonic_theta > M_PI_SQR) ?: (harmonic_theta -= M_PI_SQR);
+            if ((frame++) == (frameCount - 1)) {
+                NSLog(@"frame = %u", frame);
+                frequency = distributed_random_value(); // left
+                harmonic_frequency = distributed_random_value(); // right
+            }
         }
+        
         return (OSStatus)noErr;
     }];
 }
@@ -127,18 +206,7 @@ static ScoreWriter *score = NULL;
     [nowPlayingInfo setObject:(NSString *)@"The Life of a Demoniac" forKey:MPMediaItemPropertyAlbumTitle];
     
     static UIImage * image;
-    
-    MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithImage:(image = [UIImage imageNamed:@"WaveIcon"])];// systemImageNamed:@"AppIcon" withConfiguration:nil]];
-//                                   initWithBoundsSize:CGSizeMake(180.0, 180.0) requestHandler:^ UIImage * _Nonnull (CGSize size) {
-//        static UIImage * image;
-////        [[(image = [UIImage systemImageNamed:@"waveform.path"]) imageByApplyingSymbolConfiguration:[[UIImageSymbolConfiguration configurationWithPointSize:size.width weight:UIImageSymbolWeightLight] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor colorWithRed:0.f green:122.f/255.f blue:1.f alpha:1.f]]]] imageByPreparingForDisplay];
-//        [(image = [UIImage systemImageNamed:@"waveform.path"
-//                          withConfiguration:[[UIImageSymbolConfiguration configurationWithPointSize:size.width weight:UIImageSymbolWeightLight] configurationByApplyingConfiguration:[UIImageSymbolConfiguration configurationWithHierarchicalColor:[UIColor colorWithRed:0.f green:122.f/255.f blue:1.f alpha:1.f]]]]) imageByPreparingForDisplay];
-//        [nowPlayingInfo setObject:image forKey:MPMediaItemPropertyArtwork];
-//        return image;
-//    }];
-    
-//    static UIImage * image;
+    MPMediaItemArtwork *artwork = [[MPMediaItemArtwork alloc] initWithImage:(image = [UIImage imageNamed:@"WaveIcon"])];
     [nowPlayingInfo setObject:(MPMediaItemArtwork *)artwork forKey:MPMediaItemPropertyArtwork];
     
     [(_nowPlayingInfoCenter = [MPNowPlayingInfoCenter defaultCenter]) setNowPlayingInfo:(NSDictionary<NSString *,id> * _Nullable)nowPlayingInfo];
